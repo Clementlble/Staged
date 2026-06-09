@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Staged — Ton bureau, toujours prêt.</title>
+<meta name="description" content="Staged mémorise tes espaces de travail. En un raccourci, toutes tes apps et onglets s'ouvrent exactement là où tu les avais laissés.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#fff;
+  --bg-soft:#F7F6FB;
+  --fg:#09090B;
+  --fg-mid:rgba(9,9,11,.6);
+  --fg-muted:rgba(9,9,11,.4);
+  --fg-faint:rgba(9,9,11,.18);
+  --v:#7C3AED;
+  --v2:#6D28D9;
+  --vl:#8B5CF6;
+  --vp:rgba(124,58,237,.07);
+  --vb:rgba(124,58,237,.16);
+  --b:rgba(9,9,11,.08);
+  --bm:rgba(9,9,11,.12);
+  --font:'Plus Jakarta Sans',system-ui,-apple-system,sans-serif;
+  --r:12px;--rl:18px;--rx:24px;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);font-weight:400;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:16px;left:50%;transform:translateX(-50%);
+  z-index:200;
+  display:flex;align-items:center;gap:0;
+  padding:6px 6px 6px 18px;
+  background:rgba(255,255,255,.72);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  box-shadow:0 2px 24px rgba(0,0,0,.07);
+  border-radius:999px;
+  white-space:nowrap;
+}
+.logo{display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0}
+.logo img{height:26px;width:auto}
+.logo-name{font-size:15px;font-weight:700;color:var(--fg);letter-spacing:-.02em}
+.nav-links{display:flex;align-items:center;gap:0;list-style:none;margin:0 4px 0 8px}
+.nav-links a{padding:8px 14px;font-size:14px;font-weight:500;color:rgba(9,9,11,.58);text-decoration:none;transition:color .15s,background .15s;white-space:nowrap;border-radius:999px}
+.nav-links a:hover{color:var(--fg);background:rgba(0,0,0,.04)}
+.nav-right{display:flex;align-items:center;gap:4px;margin-left:8px}
+.nav-cta{padding:9px 20px;border-radius:999px;background:var(--fg);color:#fff;font-size:13.5px;font-weight:600;text-decoration:none;transition:opacity .15s;white-space:nowrap;flex-shrink:0}
+.nav-cta:hover{opacity:.82}
+
+/* ── HAMBURGER ── */
+.hbg{display:none;flex-direction:column;justify-content:center;gap:5px;width:36px;height:36px;background:none;border:none;cursor:pointer;padding:6px}
+.hbg span{display:block;width:100%;height:1.5px;background:var(--fg);border-radius:2px;transition:transform .3s,opacity .3s}
+.hbg.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.hbg.open span:nth-child(2){opacity:0}
+.hbg.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+.mmenu{display:none;position:fixed;inset:0;z-index:300;opacity:0;pointer-events:none;transition:opacity .25s}
+.mmenu.open{opacity:1;pointer-events:all}
+.mm-bd{position:absolute;inset:0;background:rgba(0,0,0,.35);backdrop-filter:blur(4px)}
+.mm-panel{position:absolute;top:0;right:0;bottom:0;width:min(280px,82vw);background:#fff;border-left:1px solid var(--b);transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);padding:20px;display:flex;flex-direction:column;gap:4px}
+.mmenu.open .mm-panel{transform:translateX(0)}
+.mm-hdr{display:flex;justify-content:flex-end;margin-bottom:12px}
+.mm-x{width:32px;height:32px;border-radius:8px;background:var(--bg-soft);border:1px solid var(--b);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.mm-link{display:block;padding:12px 16px;border-radius:10px;font-size:15px;font-weight:500;color:var(--fg-mid);text-decoration:none;transition:background .15s,color .15s}
+.mm-link:hover{background:var(--bg-soft);color:var(--fg)}
+.mm-btn{margin-top:12px;display:block;text-align:center;padding:14px;border-radius:11px;background:var(--fg);color:#fff;font-size:14px;font-weight:700;text-decoration:none}
+
+/* ── HERO ── */
+.hero{padding:136px 24px 0;text-align:center;background:var(--bg);background-image:radial-gradient(ellipse 80% 50% at 50% -5%,rgba(124,58,237,.07) 0%,transparent 60%)}
+.hero-icon{width:48px;height:48px;margin:0 auto 28px}
+.hero-icon img{width:100%;height:100%;object-fit:contain;display:block}
+.hero-h1{font-size:clamp(54px,8.5vw,96px);font-weight:800;line-height:1.03;letter-spacing:-.042em;color:var(--fg);max-width:840px;margin:0 auto 20px}
+.hero-sub{font-size:17px;color:var(--fg-mid);max-width:400px;margin:0 auto 36px;line-height:1.72}
+.hero-btns{display:flex;gap:10px;justify-content:center;align-items:center;margin-bottom:16px}
+.btn-dk{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:11px;background:var(--fg);color:#fff;font-size:14px;font-weight:600;text-decoration:none;transition:opacity .15s}
+.btn-dk:hover{opacity:.82}
+.btn-ol{display:inline-flex;align-items:center;gap:6px;padding:13px 20px;border-radius:11px;border:1.5px solid var(--bm);color:var(--fg-mid);font-size:14px;font-weight:500;text-decoration:none;transition:border-color .15s,color .15s}
+.btn-ol:hover{border-color:rgba(9,9,11,.3);color:var(--fg)}
+.hero-meta{font-size:12px;color:var(--fg-faint)}
+.hero-shot{margin:56px auto 0;max-width:1100px;padding:0 24px 16px;will-change:transform}
+.hero-shot img{width:100%;display:block}
+.sc{width:252px;background:#fff;border:1px solid #E8E4DF;border-radius:16px;padding:18px 20px;box-shadow:0 8px 32px rgba(0,0,0,.08),0 2px 8px rgba(0,0,0,.04);flex-shrink:0;font-family:var(--font)}
+.sc:nth-child(1){transform:rotate(-2.5deg) translateY(14px)}
+.sc:nth-child(2){transform:translateY(-14px);box-shadow:0 16px 48px rgba(124,58,237,.15),0 4px 16px rgba(0,0,0,.07)}
+.sc:nth-child(3){transform:rotate(2.5deg) translateY(14px)}
+.sc-hdr{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.sc-ico{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sc-name{font-size:13px;font-weight:700;color:#1A1816;flex:1}
+.sc-badge{font-size:9px;font-weight:700;padding:3px 8px;border-radius:5px;background:var(--v);color:#fff;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.sc-apps{display:flex;flex-direction:column;gap:6px}
+.sc-app{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:9px;background:#FAFAF9;border:1px solid #F0EDE8}
+.sc-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sc-app-name{font-size:11.5px;font-weight:600;color:#1A1816;flex:1;min-width:0}
+.sc-app-pos{font-size:10px;color:#9E978D;white-space:nowrap;font-weight:500}
+.sc-hotkey{margin-top:10px;display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:#F3EFFE;border-radius:9px;font-size:10px;color:#7C3AED;font-weight:600}
+.sc-hotkey-label{display:flex;align-items:center;gap:4px}
+.sc-kbd{background:#fff;border:1px solid rgba(124,58,237,.2);border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700;color:var(--v);line-height:1.4}
+
+/* ── BRAND BAR ── */
+.brand-bar{padding:44px 24px;border-top:1px solid var(--b);border-bottom:1px solid var(--b);text-align:center}
+.brand-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-faint);margin-bottom:24px}
+.brand-logos{display:flex;align-items:center;justify-content:center;gap:36px;flex-wrap:wrap}
+.brand-app{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--fg-muted)}
+.brand-app svg{width:18px;height:18px;flex-shrink:0}
+
+/* ── STATS ── */
+.stats{padding:120px 24px;background:var(--bg);text-align:center;position:relative;overflow:hidden}
+.float-wrap{position:absolute;inset:0;pointer-events:none}
+.fi{position:absolute;width:52px;height:52px;border-radius:14px;box-shadow:0 4px 18px rgba(0,0,0,.08);border:1px solid var(--b);background:#fff;display:flex;align-items:center;justify-content:center;opacity:0;transform:translateY(30px);will-change:transform,opacity}
+.stats-ey{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--v);margin-bottom:24px;position:relative;z-index:1}
+.stats-title{font-size:clamp(42px,6vw,72px);font-weight:800;letter-spacing:-.04em;line-height:1.05;color:var(--fg);margin-bottom:60px;position:relative;z-index:1}
+.stats-row{display:flex;justify-content:center;max-width:840px;margin:0 auto;position:relative;z-index:1}
+.stat-it{flex:1;padding:32px 20px;border-right:1px solid var(--bm)}
+.stat-it:last-child{border-right:none}
+.stat-n{font-size:52px;font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--fg);margin-bottom:8px}
+.stat-l{font-size:13px;color:var(--fg-muted);font-weight:500}
+
+/* ── COMPARISON ── */
+.compare{padding:120px 24px;background:var(--bg)}
+.compare-hdr{text-align:center;margin-bottom:64px}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:800px;margin:0 auto}
+.compare-card{border-radius:var(--rx);padding:36px;border:1.5px solid var(--bm);background:var(--bg-soft)}
+.compare-card.good{background:var(--fg);border-color:transparent}
+.compare-lbl{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;margin-bottom:24px;padding:6px 14px;border-radius:999px;display:inline-block}
+.bad-lbl{background:rgba(239,68,68,.08);color:#DC2626;border:1px solid rgba(239,68,68,.15)}
+.good-lbl{background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.15)}
+.compare-list{list-style:none;display:flex;flex-direction:column;gap:12px}
+.compare-list li{font-size:14px;line-height:1.5;display:flex;align-items:flex-start;gap:10px;color:var(--fg-mid)}
+.compare-card.good .compare-list li{color:rgba(255,255,255,.68)}
+.compare-list li::before{content:'';width:16px;height:16px;border-radius:50%;flex-shrink:0;margin-top:2px}
+.compare-card.bad .compare-list li::before{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);background-image:url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23DC2626' stroke-width='2.5' stroke-linecap='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M18 6 6 18M6 6l12 12'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:center;background-size:8px}
+.compare-card.good .compare-list li::before{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);background-image:url("data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:center;background-size:8px}
+
+/* ── SECTION TITLES ── */
+.s-ey{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--v);margin-bottom:20px;text-align:center}
+.s-title{font-size:clamp(36px,5.5vw,64px);font-weight:800;letter-spacing:-.038em;line-height:1.07;color:var(--fg);margin-bottom:16px;text-align:center}
+.s-sub{font-size:16px;color:var(--fg-mid);max-width:440px;line-height:1.72;text-align:center}
+
+/* ── SHOWCASE ── */
+.showcase{padding:120px 24px;background:var(--bg)}
+.showcase-hdr{text-align:center;margin-bottom:48px}
+.feat-tabs{display:flex;gap:6px;justify-content:center;margin-bottom:40px;flex-wrap:wrap}
+.ftab{padding:8px 20px;border-radius:999px;font-size:13px;font-weight:600;border:1.5px solid var(--bm);color:var(--fg-mid);background:none;cursor:pointer;font-family:var(--font);transition:all .18s}
+.ftab:hover,.ftab.on{background:var(--fg);color:#fff;border-color:var(--fg)}
+.feat-panels{max-width:1040px;margin:0 auto}
+.fpanel{display:none}
+.fpanel.on{display:block;animation:panelIn .28s cubic-bezier(.22,1,.36,1) both}
+.p2col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pcard{border-radius:var(--rl);overflow:hidden;border:1px solid var(--bm);background:var(--bg-soft)}
+.pcard-inner{padding:26px}
+.pcard-lbl{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--fg-muted);margin-bottom:10px}
+.pcard-t{font-size:19px;font-weight:700;color:var(--fg);margin-bottom:8px}
+.pcard-b{font-size:14px;color:var(--fg-mid);line-height:1.7}
+.pcard.dk{background:var(--fg);border-color:transparent}
+
+/* ── HOW ── */
+.how{padding:120px 24px;background:var(--bg)}
+.how-hdr{text-align:center;margin-bottom:64px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:1040px;margin:0 auto}
+.stepc{background:var(--bg-soft);border-radius:var(--rx);border:1px solid var(--bm);padding:40px 32px;position:relative;overflow:hidden;transition:box-shadow .2s,border-color .2s}
+.stepc:hover{border-color:var(--vb);box-shadow:0 8px 40px rgba(124,58,237,.07)}
+.step-bg{position:absolute;top:-16px;right:16px;font-size:128px;font-weight:900;color:rgba(0,0,0,.025);line-height:1;pointer-events:none;user-select:none}
+.step-ico{width:52px;height:52px;border-radius:14px;background:var(--vp);border:1px solid var(--vb);display:flex;align-items:center;justify-content:center;margin-bottom:28px}
+.step-tag{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--v);margin-bottom:12px}
+.stepc h3{font-size:22px;font-weight:700;color:var(--fg);margin-bottom:12px}
+.stepc p{font-size:14px;color:var(--fg-mid);line-height:1.75}
+
+
+/* ── TESTIMONIALS ── */
+.testi{padding:120px 24px;background:var(--bg-soft)}
+.testi-hdr{text-align:center;margin-bottom:64px}
+.tgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:1040px;margin:0 auto;align-items:start}
+.tc{background:var(--bg);border:1px solid var(--bm);border-radius:var(--rl);padding:28px;display:flex;flex-direction:column}
+.tc:hover{box-shadow:0 4px 24px rgba(0,0,0,.07);border-color:rgba(9,9,11,.18)}
+.tc::before{content:'★★★★★';color:#F59E0B;font-size:11px;letter-spacing:3px;display:block;margin-bottom:14px}
+.tc-q{font-size:14px;color:var(--fg-mid);line-height:1.78;margin-bottom:20px;flex:1}
+.tc-q::before{content:'\201C';color:var(--vl);font-size:28px;font-weight:800;line-height:1;display:block;margin-bottom:6px}
+.tc-auth{display:flex;align-items:center;gap:10px}
+.tc-av{width:36px;height:36px;border-radius:50%;background:var(--vp);border:1.5px solid var(--vb);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--v);flex-shrink:0}
+.tc-name{font-size:13px;font-weight:700;color:var(--fg)}
+.tc-role{font-size:11px;color:var(--fg-muted);margin-top:1px}
+
+/* ── FAQ ── */
+.faq{padding:120px 24px;background:var(--bg)}
+.faq-hdr{text-align:center;margin-bottom:64px}
+.faq-list{max-width:700px;margin:0 auto;display:flex;flex-direction:column;gap:6px}
+.fq{border:1px solid var(--bm);border-radius:var(--rl);overflow:hidden;background:var(--bg)}
+.fq-q{width:100%;text-align:left;padding:20px 24px;font-size:15px;font-weight:600;color:var(--fg);background:none;border:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;font-family:var(--font)}
+.fq-ico{width:22px;height:22px;border-radius:50%;background:var(--vp);border:1px solid var(--vb);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .3s,background .2s,border-color .2s}
+.fq-ico svg{transition:stroke .2s}
+.fq.open .fq-ico{transform:rotate(45deg);background:var(--v);border-color:var(--v)}
+.fq.open .fq-ico svg{stroke:#fff}
+.fq-a{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s cubic-bezier(.4,0,.2,1)}
+.fq.open .fq-a{grid-template-rows:1fr}
+.fq-a-inner{overflow:hidden;padding:0 24px 22px;font-size:14px;color:var(--fg-mid);line-height:1.78}
+
+/* ── PRICING ── */
+.pricing{padding:120px 24px;background:var(--bg);text-align:center}
+.pricing-hdr{margin-bottom:64px;text-align:center}
+.pgrid{display:flex;justify-content:center;max-width:420px;margin:0 auto}
+.pc{border-radius:var(--rx);border:1.5px solid var(--bm);padding:36px 32px;text-align:left;background:var(--bg-soft);transition:box-shadow .2s}
+.pc:hover{box-shadow:0 8px 40px rgba(0,0,0,.07)}
+.pc.pro{background:var(--fg);border-color:transparent;position:relative}
+.pbadge{position:absolute;top:-12px;left:28px;background:var(--v);color:#fff;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:4px 12px;border-radius:999px}
+.ptier{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-muted);margin-bottom:16px}
+.pc.pro .ptier{color:rgba(255,255,255,.4)}
+.pamount{font-size:54px;font-weight:800;letter-spacing:-.04em;line-height:1;color:var(--fg);margin-bottom:4px}
+.pamount sup{font-size:24px;vertical-align:super}
+.pc.pro .pamount{color:#fff}
+.pcad{font-size:13px;color:var(--fg-muted);margin-bottom:28px}
+.pc.pro .pcad{color:rgba(255,255,255,.38)}
+.pfeats{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+.pfeats li{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--fg-mid)}
+.pc.pro .pfeats li{color:rgba(255,255,255,.68)}
+.pck{width:18px;height:18px;border-radius:50%;flex-shrink:0;background:var(--vp);border:1px solid var(--vb);display:flex;align-items:center;justify-content:center}
+.pc.pro .pck{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.18)}
+.pbtn{display:block;text-align:center;padding:13px;border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;transition:opacity .15s;font-family:var(--font)}
+.pbtn:hover{opacity:.85}
+.pbtn.ol{border:1.5px solid var(--bm);color:var(--fg-mid)}
+.pbtn.ol:hover{border-color:rgba(9,9,11,.3);color:var(--fg)}
+.pbtn.solid{background:#fff;color:var(--fg)}
+
+/* ── CONTACT ── */
+.contact{padding:120px 24px;background:var(--bg)}
+.contact-inner{max-width:1040px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}
+.contact-hdr{position:sticky;top:100px}
+.contact-hdr .s-title{text-align:left}
+.contact-hdr .s-ey{text-align:left}
+.contact-hdr .s-sub{text-align:left;max-width:320px}
+.contact-details{margin-top:40px;display:flex;flex-direction:column;gap:16px}
+.contact-detail{display:flex;align-items:center;gap:12px;font-size:14px;color:var(--fg-mid)}
+.contact-detail-ico{width:36px;height:36px;border-radius:10px;background:var(--vp);border:1px solid var(--vb);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.contact-form{background:var(--bg-soft);border:1px solid var(--bm);border-radius:var(--rx);padding:40px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-group{display:flex;flex-direction:column;gap:8px}
+.form-group.full{grid-column:1/-1}
+.form-label{font-size:13px;font-weight:600;color:var(--fg)}
+.form-input,.form-textarea,.form-select{width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--bm);background:var(--bg);font-size:14px;font-family:var(--font);color:var(--fg);outline:none;transition:border-color .15s,box-shadow .15s;appearance:none}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--fg-faint)}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--v);box-shadow:0 0 0 3px var(--vp)}
+.form-textarea{resize:vertical;min-height:130px;line-height:1.6}
+.form-select{background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2309090B' stroke-opacity='.4' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;cursor:pointer}
+.form-submit{width:100%;padding:14px;border-radius:11px;background:var(--fg);color:#fff;font-size:14px;font-weight:700;font-family:var(--font);border:none;cursor:pointer;transition:opacity .15s;margin-top:8px}
+.form-submit:hover{opacity:.82}
+.form-hint{font-size:12px;color:var(--fg-faint);text-align:center;margin-top:12px}
+@media(max-width:860px){
+  .contact-inner{grid-template-columns:1fr;gap:48px}
+  .contact-hdr{position:static}
+  .contact-hdr .s-title,.contact-hdr .s-ey{text-align:center}
+  .contact-hdr .s-sub{text-align:center;margin:0 auto}
+  .contact-details{align-items:center}
+  .contact-form{padding:28px 20px}
+  .form-row{grid-template-columns:1fr}
+}
+
+/* ── MARQUEE ── */
+.mq-section{padding:56px 0;overflow:hidden;background:var(--bg);-webkit-mask:linear-gradient(to right,transparent,black 12%,black 88%,transparent);mask:linear-gradient(to right,transparent,black 12%,black 88%,transparent)}
+.mq-label{text-align:center;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fg-faint);margin-bottom:28px}
+.mq-wrap{overflow:hidden;margin-bottom:10px}
+.mq-track{display:flex;gap:10px;animation:mql 28s linear infinite;width:max-content}
+.mq-track.rev{animation-direction:reverse}
+.mq-track{display:flex;gap:14px;animation:mql 36s linear infinite;width:max-content}
+.mq-icon{width:56px;height:56px;border-radius:14px;background:var(--bg);border:1px solid var(--bm);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.mq-icon img,.mq-icon svg{display:block;pointer-events:none}
+.mq-wrap:hover .mq-track{animation-play-state:paused}
+@keyframes mql{from{transform:translateX(0)}to{transform:translateX(-700px)}}
+
+/* ── CTA FINAL ── */
+.cta-final{padding:140px 24px;background:var(--fg);text-align:center}
+.cta-ey{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.32);margin-bottom:24px}
+.cta-title{font-size:clamp(46px,7.5vw,88px);font-weight:800;letter-spacing:-.042em;line-height:1.04;color:#fff;margin-bottom:20px}
+.cta-sub{font-size:16px;color:rgba(255,255,255,.48);max-width:400px;margin:0 auto 40px;line-height:1.72}
+.cta-btns{display:flex;gap:10px;justify-content:center;align-items:center}
+.btn-w{display:inline-flex;align-items:center;gap:8px;padding:14px 26px;border-radius:11px;background:#fff;color:var(--fg);font-size:14px;font-weight:700;text-decoration:none;transition:opacity .15s}
+.btn-w:hover{opacity:.88}
+.btn-gw{display:inline-flex;align-items:center;gap:6px;padding:14px 20px;border-radius:11px;border:1.5px solid rgba(255,255,255,.2);color:rgba(255,255,255,.62);font-size:14px;font-weight:500;text-decoration:none;transition:border-color .15s,color .15s}
+.btn-gw:hover{border-color:rgba(255,255,255,.5);color:#fff}
+
+/* ── FOOTER ── */
+footer{background:var(--bg);padding:64px 48px 40px;border-radius:24px 24px 0 0;margin-top:-40px;position:relative;z-index:10;box-shadow:0 -8px 48px rgba(0,0,0,.1)}
+.foot-inner{max-width:1040px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
+.foot-brand img{height:22px;width:auto;margin-bottom:14px}
+.foot-tagline{font-size:13px;color:var(--fg-muted);line-height:1.65;max-width:200px}
+.foot-col h4{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-faint);margin-bottom:16px}
+.foot-col a{display:block;font-size:13px;color:var(--fg-mid);text-decoration:none;margin-bottom:10px;transition:color .15s}
+.foot-col a:hover{color:var(--fg)}
+.foot-bot{max-width:1040px;margin:0 auto;padding-top:24px;border-top:1px solid var(--b);display:flex;justify-content:space-between;align-items:center}
+.foot-copy{font-size:12px;color:var(--fg-muted)}
+
+/* ── SCROLL TO TOP ── */
+#stt{position:fixed;bottom:28px;right:28px;z-index:500;width:44px;height:44px;border-radius:50%;background:var(--fg);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,.18);opacity:0;transform:translateY(12px);transition:opacity .3s,transform .3s,background .15s;pointer-events:none}
+#stt.visible{opacity:1;transform:translateY(0);pointer-events:all}
+#stt:hover{background:var(--v)}
+#stt svg{flex-shrink:0}
+
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s}
+.reveal.up{opacity:1;transform:translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:860px){
+  nav{top:10px;width:calc(100% - 24px);max-width:calc(100% - 24px);padding:6px 6px 6px 14px;justify-content:space-between}
+  .nav-links{display:none}
+  .hbg{display:flex}
+  .mmenu{display:block}
+  .nav-cta{display:none}
+  .nav-right{margin-left:auto}
+  .hero{padding:100px 16px 60px}
+  .hero-shot{padding:0 12px}
+  .brand-logos{gap:20px}
+  .float-wrap{display:none}
+  .stats{padding:80px 20px}
+  .stats-title{margin-bottom:40px}
+  .stats-row{display:grid;grid-template-columns:1fr 1fr}
+  .stat-it{border-right:none;border-bottom:1px solid var(--bm);padding:24px 16px}
+  .stat-it:nth-child(odd){border-right:1px solid var(--bm)}
+  .stat-it:nth-child(3),.stat-it:nth-child(4){border-bottom:none}
+  .stat-n{font-size:40px}
+  .compare-grid,.p2col,.steps{grid-template-columns:1fr}
+  .tgrid{grid-template-columns:1fr}
+  .pgrid{grid-template-columns:1fr}
+  .cta-final{padding:80px 16px}
+  .cta-btns{flex-direction:column}
+  footer{padding:40px 16px}
+  .foot-inner{grid-template-columns:1fr 1fr;gap:32px}
+  .foot-bot{flex-direction:column;gap:12px;text-align:center}
+}
+@keyframes vb{from{transform:scaleY(.2)}to{transform:scaleY(1)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── ANIMATIONS ── */
+@keyframes navIn{from{opacity:0;transform:translateX(-50%) translateY(-18px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes heroIn{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes panelIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+nav{animation:navIn .55s cubic-bezier(.22,1,.36,1) .05s both}
+.hero-icon{animation:heroIn .7s cubic-bezier(.22,1,.36,1) .12s both}
+.hero-h1{animation:heroIn .9s cubic-bezier(.22,1,.36,1) .22s both}
+.hero-sub{animation:heroIn .7s cubic-bezier(.22,1,.36,1) .36s both}
+.hero-btns{animation:heroIn .7s cubic-bezier(.22,1,.36,1) .46s both}
+.hero-meta{animation:heroIn .6s cubic-bezier(.22,1,.36,1) .52s both}
+.hero-shot{animation:heroIn 1s cubic-bezier(.22,1,.36,1) .58s both}
+.steps .stepc:nth-child(2){transition-delay:.1s}
+.steps .stepc:nth-child(3){transition-delay:.2s}
+.tgrid .tc:nth-child(2){transition-delay:.07s}
+.tgrid .tc:nth-child(3){transition-delay:.14s}
+.tgrid .tc:nth-child(4){transition-delay:.21s}
+.tgrid .tc:nth-child(5){transition-delay:.28s}
+.tgrid .tc:nth-child(6){transition-delay:.35s}
+.tgrid .tc:nth-child(7){transition-delay:.42s}
+.tgrid .tc:nth-child(8){transition-delay:.49s}
+.tgrid .tc:nth-child(9){transition-delay:.56s}
+.tgrid .tc{transition:opacity .7s,transform .7s,box-shadow .2s,border-color .2s}
+@media(prefers-reduced-motion:reduce){nav,.hero-icon,.hero-h1,.hero-sub,.hero-btns,.hero-meta,.hero-shot,.fi{animation:none!important}.reveal{transition:none!important}}
+
+/* ── WAITLIST ── */
+.waitlist{padding:120px 24px;background:var(--bg);text-align:center}
+.wl-inner{max-width:560px;margin:0 auto}
+.wl-badge-pre{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--v);background:var(--vp);border:1px solid var(--vb);padding:6px 14px;border-radius:999px;margin-bottom:24px}
+.wl-badge-pre span{width:6px;height:6px;border-radius:50%;background:var(--v);animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.wl-form{margin:36px auto 0}
+.wl-row{display:flex;gap:8px;max-width:480px;margin:0 auto 12px}
+.wl-input{flex:1;padding:13px 16px;border-radius:11px;border:1.5px solid var(--bm);background:var(--bg-soft);font-size:14px;font-family:var(--font);color:var(--fg);outline:none;transition:border-color .15s,box-shadow .15s}
+.wl-input::placeholder{color:var(--fg-faint)}
+.wl-input:focus{border-color:var(--v);box-shadow:0 0 0 3px var(--vp)}
+.wl-btn{padding:13px 24px;border-radius:11px;background:var(--fg);color:#fff;font-size:14px;font-weight:700;font-family:var(--font);border:none;cursor:pointer;white-space:nowrap;transition:opacity .15s}
+.wl-btn:hover{opacity:.82}
+.wl-hint{font-size:12px;color:var(--fg-faint)}
+.wl-trust{display:flex;gap:20px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+.wl-trust-it{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--fg-muted)}
+.wl-trust-it svg{flex-shrink:0}
+.wl-input-dark{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);color:#fff}
+.wl-input-dark::placeholder{color:rgba(255,255,255,.3)}
+.wl-input-dark:focus{border-color:rgba(255,255,255,.5);box-shadow:0 0 0 3px rgba(255,255,255,.08)}
+.wl-btn-cta{background:#fff;color:var(--fg)}
+.wl-btn-cta:hover{opacity:.88}
+@media(max-width:600px){.wl-row{flex-direction:column}.wl-btn{width:100%}}
+</style>
+</head>
+<body>
+
+<!-- SCROLL TO TOP -->
+<button id="stt" aria-label="Retour en haut">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="logo">
+    <img src="assets/tray-icon.png" alt="Staged">
+    <span class="logo-name">Staged</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#how">Comment ça marche</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#waitlist">Liste d'attente</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="#waitlist" class="nav-cta">S'inscrire</a>
+    <button class="hbg" id="hbg" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mmenu" id="mmenu">
+  <div class="mm-bd" id="mm-bd"></div>
+  <div class="mm-panel">
+    <div class="mm-hdr"><button class="mm-x" id="mm-x"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--fg-mid)" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+    <a href="#how" class="mm-link" data-close>Comment ça marche</a>
+    <a href="#features" class="mm-link" data-close>Features</a>
+    <a href="#waitlist" class="mm-link" data-close>Liste d'attente</a>
+    <a href="#faq" class="mm-link" data-close>FAQ</a>
+    <a href="#contact" class="mm-link" data-close>Contact</a>
+    <a href="#waitlist" class="mm-btn">Rejoindre la liste</a>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <h1 class="hero-h1">Ton bureau,<br>toujours prêt.</h1>
+  <p class="hero-sub">Crée des espaces de travail contextuels. En un raccourci, toutes tes apps et onglets s'ouvrent exactement là où tu les avais laissés.</p>
+  <div class="hero-btns">
+    <a href="#waitlist" class="btn-dk">Rejoindre la liste d'attente</a>
+    <a href="#how" class="btn-ol">Voir comment ça marche →</a>
+  </div>
+  <div class="hero-shot">
+    <img src="assets/manage.png" alt="Staged — Gestion des espaces">
+  </div>
+</section>
+
+
+
+<!-- STATS -->
+<section class="stats">
+  <div class="float-wrap">
+    <div class="fi" style="top:12%;left:7%"><svg width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.15 2.587L18.21.21a1.494 1.494 0 0 0-1.705.29l-9.46 8.63-4.12-3.128a.999.999 0 0 0-1.276.057L.327 7.261A1 1 0 0 0 .326 8.74L3.899 12 .326 15.26a1 1 0 0 0 .001 1.479L1.65 17.94a.999.999 0 0 0 1.276.057l4.12-3.128 9.46 8.63a1.492 1.492 0 0 0 1.704.29l4.942-2.377A1.5 1.5 0 0 0 24 20.06V3.939a1.5 1.5 0 0 0-.85-1.352zm-5.146 14.861L10.826 12l7.178-5.448v10.896z" fill="#007ACC"/></svg></div>
+    <div class="fi" style="top:22%;left:19%"><img src="https://cdn.simpleicons.org/figma/F24E1E" width="26" height="26" alt="Figma" draggable="false"></div>
+    <div class="fi" style="top:58%;left:6%"><img src="https://cdn.simpleicons.org/notion/000000" width="26" height="26" alt="Notion" draggable="false"></div>
+    <div class="fi" style="top:78%;left:16%"><img src="https://cdn.simpleicons.org/spotify/1DB954" width="26" height="26" alt="Spotify" draggable="false"></div>
+    <div class="fi" style="top:10%;right:9%"><svg width="26" height="26" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52z" fill="#E01E5A"/><path d="M6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313z" fill="#E01E5A"/><path d="M8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834z" fill="#2EB67D"/><path d="M8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312z" fill="#2EB67D"/><path d="M18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834z" fill="#ECB22E"/><path d="M17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312z" fill="#ECB22E"/><path d="M15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52z" fill="#36C5F0"/><path d="M15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z" fill="#36C5F0"/></svg></div>
+    <div class="fi" style="top:38%;right:6%"><img src="https://cdn.simpleicons.org/zoom/2D8CFF" width="26" height="26" alt="Zoom" draggable="false"></div>
+    <div class="fi" style="top:68%;right:11%"><img src="https://cdn.simpleicons.org/linear/5B5BD6" width="26" height="26" alt="Linear" draggable="false"></div>
+    <div class="fi" style="top:82%;right:22%"><img src="https://cdn.simpleicons.org/googlechrome/4285F4" width="26" height="26" alt="Chrome" draggable="false"></div>
+  </div>
+  <p class="stats-ey reveal">Performance</p>
+  <h2 class="stats-title reveal">Une app discrète.<br>Un impact massif.</h2>
+  <div class="stats-row reveal">
+    <div class="stat-it"><div class="stat-n">&lt; 2s</div><div class="stat-l">Temps de switch</div></div>
+    <div class="stat-it"><div class="stat-n">0</div><div class="stat-l">Donnée cloud</div></div>
+    <div class="stat-it"><div class="stat-n">50 MB</div><div class="stat-l">Empreinte mémoire</div></div>
+    <div class="stat-it"><div class="stat-n">∞</div><div class="stat-l">Espaces (Pro)</div></div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="compare">
+  <div class="compare-hdr reveal">
+    <p class="s-ey">Le problème</p>
+    <h2 class="s-title">Tu mérites mieux<br>qu'alt-tab.</h2>
+    <p class="s-sub" style="margin:0 auto">Chaque changement de contexte te coûte des minutes. Staged les rend instantanés.</p>
+  </div>
+  <div class="compare-grid reveal">
+    <div class="compare-card bad">
+      <span class="compare-lbl bad-lbl">Sans Staged</span>
+      <ul class="compare-list">
+        <li>Chercher chaque app manuellement dans le Dock</li>
+        <li>Retrouver les bons onglets un par un</li>
+        <li>Repositionner toutes les fenêtres</li>
+        <li>Perdre 5 à 10 min à chaque switch de contexte</li>
+        <li>Perdre le fil de ses pensées en route</li>
+        <li>Recommencer depuis zéro après chaque réunion</li>
+      </ul>
+    </div>
+    <div class="compare-card good">
+      <span class="compare-lbl good-lbl">Avec Staged</span>
+      <ul class="compare-list">
+        <li>⌥ Space → choisir l'espace → c'est chargé</li>
+        <li>Tous tes onglets dans l'ordre exact</li>
+        <li>Fenêtres positionnées automatiquement</li>
+        <li>Switch en moins de 2 secondes, garanti</li>
+        <li>Focus immédiat, sans friction mentale</li>
+        <li>Reprendre exactement là où tu t'étais arrêté</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SHOWCASE / FEATURES -->
+<section class="showcase" id="features">
+  <div class="showcase-hdr reveal">
+    <p class="s-ey">Features</p>
+    <h2 class="s-title">Trouvez votre contexte<br>en quelques secondes.</h2>
+    <p class="s-sub" style="margin:0 auto">Staged s'adapte à ton workflow, pas l'inverse.</p>
+  </div>
+  <div class="feat-tabs reveal">
+    <button class="ftab on" data-tab="espaces">Espaces</button>
+    <button class="ftab" data-tab="switcher">Switcher global</button>
+    <button class="ftab" data-tab="voice">Commande vocale</button>
+    <button class="ftab" data-tab="auto">Switch automatique</button>
+    <button class="ftab" data-tab="screens">Multi-écrans</button>
+    <button class="ftab" data-tab="privacy">Vie privée</button>
+    <button class="ftab" data-tab="hotkeys">Hotkeys</button>
+  </div>
+  <div class="feat-panels reveal">
+
+    <!-- PANEL: ESPACES -->
+    <div class="fpanel on" id="panel-espaces">
+      <div class="p2col">
+        <div class="pcard">
+          <div style="background:#EDE9FE;padding:32px 28px 0;min-height:200px">
+            <div style="background:white;border-radius:12px;padding:18px;box-shadow:0 2px 16px rgba(0,0,0,.07)">
+              <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:rgba(9,9,11,.35);margin-bottom:12px">Mes espaces</div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#F5F3FF;border:1.5px solid rgba(124,58,237,.2);border-radius:9px">
+                  <div style="width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,#7C3AED,#8B5CF6);flex-shrink:0"></div>
+                  <div style="flex:1;font-size:13px;font-weight:600">Espace Dev</div>
+                  <div style="font-size:9px;font-weight:800;background:#7C3AED;color:white;padding:2px 7px;border-radius:5px">ACTIF</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid rgba(9,9,11,.07);border-radius:9px">
+                  <div style="width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,#0ea5e9,#38bdf8);flex-shrink:0"></div>
+                  <div style="flex:1;font-size:13px;font-weight:600;color:rgba(9,9,11,.7)">Espace Design</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid rgba(9,9,11,.07);border-radius:9px">
+                  <div style="width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,#10b981,#34d399);flex-shrink:0"></div>
+                  <div style="flex:1;font-size:13px;font-weight:600;color:rgba(9,9,11,.7)">Espace Perso</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="pcard-inner">
+            <p class="pcard-lbl">Espaces de travail</p>
+            <h3 class="pcard-t">Un contexte pour chaque projet</h3>
+            <p class="pcard-b">Chaque app à sa position exacte. Staged mémorise tout — apps, fenêtres, onglets — et les restaure instantanément.</p>
+          </div>
+        </div>
+        <div class="pcard dk">
+          <div style="padding:32px 28px 0;min-height:200px">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:14px">Chrome · 4 onglets sauvegardés</div>
+            <div style="display:flex;flex-direction:column;gap:7px">
+              <div style="padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-radius:9px;font-size:12px;color:rgba(255,255,255,.65)">github.com/mon-projet</div>
+              <div style="padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-radius:9px;font-size:12px;color:rgba(255,255,255,.65)">localhost:3000</div>
+              <div style="padding:10px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:9px;font-size:12px;color:rgba(255,255,255,.4)">docs.react.dev</div>
+              <div style="padding:10px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:9px;font-size:12px;color:rgba(255,255,255,.4)">figma.com/file/…</div>
+            </div>
+          </div>
+          <div class="pcard-inner">
+            <p class="pcard-lbl" style="color:rgba(255,255,255,.3)">Sync des onglets</p>
+            <h3 class="pcard-t" style="color:white">Même tes onglets, dans l'ordre exact</h3>
+            <p class="pcard-b" style="color:rgba(255,255,255,.48)">Chrome, Safari, Firefox. Chaque onglet rouvre exactement là où tu l'avais laissé.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL: SWITCHER -->
+    <div class="fpanel" id="panel-switcher">
+      <div style="max-width:600px;margin:0 auto">
+        <div style="background:var(--bg);border:1px solid var(--bm);border-radius:20px;padding:48px;text-align:center">
+          <div style="font-size:52px;font-weight:900;letter-spacing:-.04em;color:var(--fg);margin-bottom:8px">⌥ Space</div>
+          <div style="font-size:15px;color:var(--fg-muted);margin-bottom:32px">Depuis n'importe quelle app, à tout moment</div>
+          <div style="display:flex;flex-direction:column;gap:8px;max-width:320px;margin:0 auto">
+            <div style="padding:13px 18px;background:white;border:2px solid var(--v);border-radius:12px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 24px rgba(124,58,237,.14)">
+              <div style="width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,#7C3AED,#8B5CF6);flex-shrink:0"></div>
+              <div style="font-size:14px;font-weight:700;flex:1;text-align:left">Espace Dev</div>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--v)" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </div>
+            <div style="padding:13px 18px;background:white;border:1px solid var(--b);border-radius:12px;display:flex;align-items:center;gap:12px">
+              <div style="width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,#0ea5e9,#38bdf8);flex-shrink:0"></div>
+              <div style="font-size:14px;font-weight:600;color:var(--fg-mid);flex:1;text-align:left">Espace Design</div>
+            </div>
+            <div style="padding:13px 18px;background:white;border:1px solid var(--b);border-radius:12px;display:flex;align-items:center;gap:12px">
+              <div style="width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,#10b981,#34d399);flex-shrink:0"></div>
+              <div style="font-size:14px;font-weight:600;color:var(--fg-mid);flex:1;text-align:left">Espace Perso</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL: VOICE -->
+    <div class="fpanel" id="panel-voice">
+      <div style="max-width:580px;margin:0 auto">
+        <div style="background:var(--bg);border:1px solid var(--bm);border-radius:20px;padding:48px;text-align:center">
+          <div style="width:80px;height:80px;background:#F5F3FF;border:2px solid var(--vb);border-radius:50%;margin:0 auto 24px;display:flex;align-items:center;justify-content:center">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--v)" stroke-width="1.6" stroke-linecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="23"/></svg>
+          </div>
+          <div style="font-size:20px;font-weight:700;color:var(--fg);margin-bottom:8px">Appuie sur ⌥V, parle.</div>
+          <div style="font-size:15px;color:var(--fg-muted);margin-bottom:32px">Staged reconnaît le nom de ton espace et le charge.</div>
+          <div style="display:inline-flex;align-items:center;gap:10px;background:white;border:1px solid var(--bm);border-radius:999px;padding:12px 22px;box-shadow:0 2px 14px rgba(0,0,0,.05)">
+            <div style="display:flex;align-items:center;gap:2px;height:20px">
+              <span style="display:inline-block;width:3px;background:var(--v);border-radius:2px;animation:vb .6s ease-in-out infinite alternate;height:7px"></span>
+              <span style="display:inline-block;width:3px;background:var(--v);border-radius:2px;animation:vb .6s ease-in-out infinite alternate;animation-delay:.1s;height:14px"></span>
+              <span style="display:inline-block;width:3px;background:var(--v);border-radius:2px;animation:vb .6s ease-in-out infinite alternate;animation-delay:.2s;height:18px"></span>
+              <span style="display:inline-block;width:3px;background:var(--v);border-radius:2px;animation:vb .6s ease-in-out infinite alternate;animation-delay:.15s;height:12px"></span>
+              <span style="display:inline-block;width:3px;background:var(--v);border-radius:2px;animation:vb .6s ease-in-out infinite alternate;animation-delay:.05s;height:9px"></span>
+            </div>
+            <span style="font-size:14px;color:var(--fg-mid);font-style:italic">«Espace Dev»</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--fg-faint)" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            <span style="font-size:14px;font-weight:700;color:var(--v)">Dev chargé ✓</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL: AUTO -->
+    <div class="fpanel" id="panel-auto">
+      <div style="max-width:580px;margin:0 auto">
+        <div style="background:var(--bg);border:1px solid var(--bm);border-radius:20px;padding:32px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--fg-muted);margin-bottom:18px">Planification automatique</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:12px;padding:13px 16px;background:var(--bg-soft);border:1px solid var(--b);border-radius:10px">
+              <div style="width:8px;height:8px;border-radius:50%;background:var(--v);flex-shrink:0"></div>
+              <span style="font-size:12px;font-weight:700;color:var(--fg-muted);width:38px;flex-shrink:0">9:00</span>
+              <span style="font-size:14px;font-weight:700;flex:1">Dev</span>
+              <span style="font-size:12px;color:var(--fg-muted)">VS Code · Terminal · Chrome</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding:13px 16px;background:var(--bg-soft);border:1px solid var(--b);border-radius:10px">
+              <div style="width:8px;height:8px;border-radius:50%;background:rgba(9,9,11,.12);flex-shrink:0"></div>
+              <span style="font-size:12px;font-weight:700;color:var(--fg-muted);width:38px;flex-shrink:0">12:30</span>
+              <span style="font-size:14px;color:var(--fg-muted);flex:1">Pause déjeuner</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding:13px 16px;background:var(--bg-soft);border:1px solid var(--b);border-radius:10px">
+              <div style="width:8px;height:8px;border-radius:50%;background:#0ea5e9;flex-shrink:0"></div>
+              <span style="font-size:12px;font-weight:700;color:var(--fg-muted);width:38px;flex-shrink:0">14:00</span>
+              <span style="font-size:14px;font-weight:700;flex:1">Design</span>
+              <span style="font-size:12px;color:var(--fg-muted)">Figma · Notion</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;padding:13px 16px;background:var(--bg-soft);border:1px solid var(--b);border-radius:10px">
+              <div style="width:8px;height:8px;border-radius:50%;background:#10b981;flex-shrink:0"></div>
+              <span style="font-size:12px;font-weight:700;color:var(--fg-muted);width:38px;flex-shrink:0">18:00</span>
+              <span style="font-size:14px;font-weight:700;flex:1">Perso</span>
+              <span style="font-size:12px;color:var(--fg-muted)">Spotify · Safari</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- PANEL: MULTI-ÉCRANS -->
+    <div class="fpanel" id="panel-screens">
+      <div class="p2col">
+        <div class="pcard">
+          <div style="background:#EDE9FE;padding:32px 28px 0;min-height:200px;display:flex;align-items:flex-end">
+            <div style="width:100%;background:white;border-radius:12px;padding:20px;box-shadow:0 2px 16px rgba(0,0,0,.07)">
+              <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:rgba(9,9,11,.35);margin-bottom:14px">Disposition mémorisée</div>
+              <div style="display:flex;gap:10px;align-items:flex-end">
+                <div style="flex:2;background:#F5F3FF;border:2px solid var(--vb);border-radius:8px;height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px">
+                  <span style="font-size:10px;font-weight:700;color:var(--v)">Écran principal</span>
+                  <span style="font-size:9px;color:var(--vl)">VS Code · Chrome</span>
+                </div>
+                <div style="flex:1;background:var(--bg-soft);border:1.5px solid var(--bm);border-radius:8px;height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px">
+                  <span style="font-size:10px;font-weight:700;color:var(--fg-muted)">Ext.</span>
+                  <span style="font-size:9px;color:var(--fg-faint)">Figma</span>
+                </div>
+              </div>
+              <div style="margin-top:12px;font-size:11px;color:var(--fg-muted);display:flex;align-items:center;gap:6px">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                Fenêtres repositionnées automatiquement
+              </div>
+            </div>
+          </div>
+          <div class="pcard-inner">
+            <p class="pcard-lbl">Multi-écrans</p>
+            <h3 class="pcard-t">Chaque fenêtre sur le bon écran</h3>
+            <p class="pcard-b">Staged mémorise sur quel moniteur se trouvait chaque fenêtre et la repositionne proportionnellement à chaque switch.</p>
+          </div>
+        </div>
+        <div class="pcard dk">
+          <div style="padding:32px 28px 0;min-height:200px">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:14px">Switch en cours…</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-radius:9px">
+                <div style="width:8px;height:8px;border-radius:50%;background:#10b981;flex-shrink:0;animation:spin 1s linear infinite"></div>
+                <span style="font-size:12px;color:rgba(255,255,255,.7)">Repositionnement écran principal…</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-radius:9px">
+                <div style="width:8px;height:8px;border-radius:50%;background:#10b981;flex-shrink:0;animation:spin 1s linear infinite;animation-delay:.2s"></div>
+                <span style="font-size:12px;color:rgba(255,255,255,.7)">Repositionnement écran externe…</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:9px">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                <span style="font-size:12px;color:rgba(255,255,255,.45)">Fait en 1.8s</span>
+              </div>
+            </div>
+          </div>
+          <div class="pcard-inner">
+            <p class="pcard-lbl" style="color:rgba(255,255,255,.3)">Performance</p>
+            <h3 class="pcard-t" style="color:white">Zéro reconfiguration manuelle</h3>
+            <p class="pcard-b" style="color:rgba(255,255,255,.48)">Que tu aies 1 ou 3 écrans, Staged gère tout. Branche, débranque — il s'adapte à chaque configuration.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL: VIE PRIVÉE -->
+    <div class="fpanel" id="panel-privacy">
+      <div style="max-width:640px;margin:0 auto">
+        <div style="background:var(--bg-soft);border:1px solid var(--bm);border-radius:20px;padding:48px">
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:32px">
+            <div style="width:56px;height:56px;border-radius:16px;background:var(--vp);border:1px solid var(--vb);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--v)" stroke-width="1.7" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <div>
+              <div style="font-size:18px;font-weight:700;color:var(--fg)">100% local, 0 cloud</div>
+              <div style="font-size:14px;color:var(--fg-muted);margin-top:2px">Tes données ne quittent jamais ton Mac</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div style="padding:16px;background:var(--bg);border:1px solid var(--bm);border-radius:12px">
+              <div style="font-size:20px;margin-bottom:8px">🔒</div>
+              <div style="font-size:13px;font-weight:700;color:var(--fg);margin-bottom:4px">Aucun serveur</div>
+              <div style="font-size:12px;color:var(--fg-muted);line-height:1.5">Staged ne communique avec aucun backend. Tout est stocké localement.</div>
+            </div>
+            <div style="padding:16px;background:var(--bg);border:1px solid var(--bm);border-radius:12px">
+              <div style="font-size:20px;margin-bottom:8px">👤</div>
+              <div style="font-size:13px;font-weight:700;color:var(--fg);margin-bottom:4px">Pas de compte</div>
+              <div style="font-size:12px;color:var(--fg-muted);line-height:1.5">Aucune inscription. Aucun email. Tu télécharges et tu utilises.</div>
+            </div>
+            <div style="padding:16px;background:var(--bg);border:1px solid var(--bm);border-radius:12px">
+              <div style="font-size:20px;margin-bottom:8px">✈️</div>
+              <div style="font-size:13px;font-weight:700;color:var(--fg);margin-bottom:4px">Hors-ligne natif</div>
+              <div style="font-size:12px;color:var(--fg-muted);line-height:1.5">Fonctionne sans connexion internet. Toujours, sans exception.</div>
+            </div>
+            <div style="padding:16px;background:var(--bg);border:1px solid var(--bm);border-radius:12px">
+              <div style="font-size:20px;margin-bottom:8px">🚫</div>
+              <div style="font-size:13px;font-weight:700;color:var(--fg);margin-bottom:4px">Zéro tracking</div>
+              <div style="font-size:12px;color:var(--fg-muted);line-height:1.5">Pas d'analytics, pas de telemetry. Staged ne sait pas qui tu es.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL: HOTKEYS -->
+    <div class="fpanel" id="panel-hotkeys">
+      <div style="max-width:580px;margin:0 auto">
+        <div style="background:var(--bg-soft);border:1px solid var(--bm);border-radius:20px;padding:40px">
+          <div style="font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--fg-muted);margin-bottom:20px">Raccourcis configurables</div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:28px">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--bg);border:1.5px solid var(--v);border-radius:11px;box-shadow:0 2px 12px var(--vp)">
+              <div>
+                <div style="font-size:13px;font-weight:700;color:var(--fg)">Switcher global</div>
+                <div style="font-size:11px;color:var(--fg-muted);margin-top:2px">Ouvre le switcher d'espaces</div>
+              </div>
+              <div style="display:flex;gap:4px"><span style="padding:4px 10px;background:var(--fg);color:white;border-radius:6px;font-size:12px;font-weight:700">⌥</span><span style="padding:4px 10px;background:var(--fg);color:white;border-radius:6px;font-size:12px;font-weight:700">Space</span></div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--bg);border:1px solid var(--bm);border-radius:11px">
+              <div>
+                <div style="font-size:13px;font-weight:700;color:var(--fg)">Commande vocale</div>
+                <div style="font-size:11px;color:var(--fg-muted);margin-top:2px">Dicte le nom de l'espace</div>
+              </div>
+              <div style="display:flex;gap:4px"><span style="padding:4px 10px;background:var(--bg-soft);border:1px solid var(--bm);border-radius:6px;font-size:12px;font-weight:700;color:var(--fg)">⌥</span><span style="padding:4px 10px;background:var(--bg-soft);border:1px solid var(--bm);border-radius:6px;font-size:12px;font-weight:700;color:var(--fg)">V</span></div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--bg);border:1px solid var(--bm);border-radius:11px">
+              <div>
+                <div style="font-size:13px;font-weight:700;color:var(--fg)">Snapshot rapide</div>
+                <div style="font-size:11px;color:var(--fg-muted);margin-top:2px">Sauvegarde l'état actuel</div>
+              </div>
+              <div style="display:flex;gap:4px"><span style="padding:4px 10px;background:var(--bg-soft);border:1px solid var(--bm);border-radius:6px;font-size:12px;font-weight:700;color:var(--fg)">⌥</span><span style="padding:4px 10px;background:var(--bg-soft);border:1px solid var(--bm);border-radius:6px;font-size:12px;font-weight:700;color:var(--fg)">S</span></div>
+            </div>
+          </div>
+          <div style="padding:14px 16px;background:var(--vp);border:1px solid var(--vb);border-radius:11px;font-size:13px;color:var(--v);font-weight:500">
+            ✏️ Tous les raccourcis sont modifiables depuis les Préférences. Adapte Staged à ta façon de travailler.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="how-hdr reveal">
+    <p class="s-ey">Comment ça marche</p>
+    <h2 class="s-title">Trois étapes.<br>Zéro friction.</h2>
+    <p class="s-sub" style="margin:0 auto">De l'idée au focus en moins de deux secondes. Staged disparaît dans ton workflow.</p>
+  </div>
+  <div class="steps">
+    <div class="stepc reveal">
+      <div class="step-bg">1</div>
+      <div class="step-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--v)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg></div>
+      <p class="step-tag">01 — Configure</p>
+      <h3>Snapshot</h3>
+      <p>Ouvre tes apps, positionne tes fenêtres. Staged mémorise tout — apps, positions, onglets — en un seul clic.</p>
+    </div>
+    <div class="stepc reveal">
+      <div class="step-bg">2</div>
+      <div class="step-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--v)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+      <p class="step-tag">02 — Switche</p>
+      <h3>⌥ + Space</h3>
+      <p>Le switcher s'ouvre en overlay depuis n'importe quelle app. Choisis ton espace, tout se reconstruit instantanément.</p>
+    </div>
+    <div class="stepc reveal">
+      <div class="step-bg">3</div>
+      <div class="step-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--v)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+      <p class="step-tag">03 — Focus</p>
+      <h3>Reprends</h3>
+      <p>Tu es exactement là où tu t'étais arrêté. Même les onglets. Zéro temps perdu à tout retrouver.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="faq-hdr reveal">
+    <p class="s-ey">FAQ</p>
+    <h2 class="s-title">Questions fréquentes.</h2>
+    <p class="s-sub" style="margin:0 auto">Tout ce que tu veux savoir avant de télécharger.</p>
+  </div>
+  <div class="faq-list reveal">
+
+    <div class="fq">
+      <button class="fq-q">
+        Staged fonctionne avec quelles apps ?
+        <span class="fq-ico"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--v)" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+      </button>
+      <div class="fq-a"><div class="fq-a-inner">Staged fonctionne avec toutes les apps macOS natives et Electron — VS Code, Chrome, Safari, Firefox, Arc, Figma, Notion, Slack, Zoom, Terminal, Warp, et des centaines d'autres. Si l'app tourne sur ton Mac, Staged peut la mémoriser.</div></div>
+    </div>
+
+    <div class="fq">
+      <button class="fq-q">
+        Mes données sont-elles envoyées quelque part ?
+        <span class="fq-ico"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--v)" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+      </button>
+      <div class="fq-a"><div class="fq-a-inner">Non, jamais. Staged est 100% local. Tes espaces, tes URLs, tes positions de fenêtres — tout reste sur ton Mac. Il n'y a aucun serveur, aucun compte requis, aucun tracking. L'app fonctionne même sans connexion internet.</div></div>
+    </div>
+
+    <div class="fq">
+      <button class="fq-q">
+        Quand Staged sera-t-il disponible ?
+        <span class="fq-ico"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--v)" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+      </button>
+      <div class="fq-a"><div class="fq-a-inner">Staged est en phase de développement active. Les personnes inscrites sur la liste d'attente seront les premières notifiées — et pourront accéder à l'app en avant-première.</div></div>
+    </div>
+
+    <div class="fq">
+      <button class="fq-q">
+        Qu'est-ce que je reçois en m'inscrivant ?
+        <span class="fq-ico"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--v)" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+      </button>
+      <div class="fq-a"><div class="fq-a-inner">Un seul email au lancement — pas de newsletter, pas de spam. Les inscrits auront accès en avant-première et bénéficieront d'un tarif early bird. Rien d'autre.</div></div>
+    </div>
+
+    <div class="fq">
+      <button class="fq-q">
+        Staged ralentit-il mon Mac ou mange-t-il de la batterie ?
+        <span class="fq-ico"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--v)" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+      </button>
+      <div class="fq-a"><div class="fq-a-inner">Staged est conçu pour être invisible. Il occupe moins de 50 MB de RAM, n'a aucun processus de fond gourmand, et reste dormant dans la barre des menus quand tu ne l'utilises pas. Sur un MacBook, l'impact batterie est négligeable.</div></div>
+    </div>
+
+    <div class="fq">
+      <button class="fq-q">
+        Staged est-il compatible avec le multi-écrans ?
+        <span class="fq-ico"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--v)" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>
+      </button>
+      <div class="fq-a"><div class="fq-a-inner">Oui, en version Pro. Staged mémorise quelle fenêtre se trouvait sur quel écran et la repositionne proportionnellement lors du switch. Si tu travailles avec un ou plusieurs moniteurs externes, Staged gère tout automatiquement.</div></div>
+    </div>
+
+
+  </div>
+</section>
+
+<!-- WAITLIST -->
+<section class="waitlist" id="waitlist">
+  <div class="wl-inner reveal">
+    <p class="s-ey">Accès anticipé</p>
+    <h2 class="s-title">Sois parmi<br>les premiers.</h2>
+    <p class="s-sub" style="margin:0 auto">Staged arrive bientôt. Inscris-toi pour être notifié au lancement et accéder en avant-première — avec un tarif early bird.</p>
+    <form class="wl-form" onsubmit="handleWaitlist(event)">
+      <div class="wl-row">
+        <input class="wl-input" type="email" placeholder="ton@email.com" required autocomplete="email">
+        <button type="submit" class="wl-btn">Rejoindre la liste →</button>
+      </div>
+      <p class="wl-hint">Pas de spam. Un seul email au lancement.</p>
+    </form>
+    <div class="wl-trust">
+      <span class="wl-trust-it"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Aucun spam</span>
+      <span class="wl-trust-it"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Accès avant tout le monde</span>
+      <span class="wl-trust-it"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>Tarif early bird</span>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="contact-inner">
+
+    <div class="contact-hdr reveal">
+      <p class="s-ey">Contact</p>
+      <h2 class="s-title">On est là<br>pour toi.</h2>
+      <p class="s-sub">Une question, un retour, une idée de feature ? On répond toujours sous 24h.</p>
+      <div class="contact-details">
+        <div class="contact-detail">
+          <div class="contact-detail-ico">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--v)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          support@staged.app
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-ico">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--v)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          Réponse sous 24h ouvrées
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-ico">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--v)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          </div>
+          Issues sur GitHub
+        </div>
+      </div>
+    </div>
+
+    <form class="contact-form reveal" onsubmit="handleContact(event)">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="cf-name">Prénom</label>
+          <input class="form-input" id="cf-name" type="text" placeholder="Thomas" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="cf-email">Email</label>
+          <input class="form-input" id="cf-email" type="email" placeholder="thomas@example.com" required>
+        </div>
+        <div class="form-group full">
+          <label class="form-label" for="cf-subject">Sujet</label>
+          <select class="form-select form-input" id="cf-subject">
+            <option value="">Choisir un sujet…</option>
+            <option value="bug">🐛 Signaler un bug</option>
+            <option value="feature">💡 Suggérer une feature</option>
+            <option value="support">🙋 Support technique</option>
+            <option value="pricing">💳 Question sur les tarifs</option>
+            <option value="press">📰 Presse / Partenariat</option>
+            <option value="other">💬 Autre</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label class="form-label" for="cf-msg">Message</label>
+          <textarea class="form-textarea" id="cf-msg" placeholder="Décris ta question ou ton retour en détail…" required></textarea>
+        </div>
+      </div>
+      <button type="submit" class="form-submit" id="cf-submit">Envoyer le message</button>
+      <p class="form-hint">Pas de spam. On utilise ton email uniquement pour répondre.</p>
+    </form>
+
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="mq-section">
+  <p class="mq-label">Compatible avec vos apps favorites</p>
+  <div class="mq-wrap">
+    <div class="mq-track">
+      <div class="mq-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="#007ACC"><path d="M23.15 2.587L18.21.21a1.494 1.494 0 0 0-1.705.29l-9.46 8.63-4.12-3.128a.999.999 0 0 0-1.276.057L.327 7.261A1 1 0 0 0 .326 8.74L3.899 12 .326 15.26a1 1 0 0 0 .001 1.479L1.65 17.94a.999.999 0 0 0 1.276.057l4.12-3.128 9.46 8.63a1.492 1.492 0 0 0 1.704.29l4.942-2.377A1.5 1.5 0 0 0 24 20.06V3.939a1.5 1.5 0 0 0-.85-1.352zm-5.146 14.861L10.826 12l7.178-5.448v10.896z"/></svg></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/googlechrome/4285F4" width="28" height="28" alt="Chrome" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/figma/F24E1E" width="28" height="28" alt="Figma" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/notion/000000" width="28" height="28" alt="Notion" draggable="false"></div>
+      <div class="mq-icon"><svg width="28" height="28" viewBox="0 0 24 24"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52z" fill="#E01E5A"/><path d="M6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313z" fill="#E01E5A"/><path d="M8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834z" fill="#2EB67D"/><path d="M8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312z" fill="#2EB67D"/><path d="M18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834z" fill="#ECB22E"/><path d="M17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312z" fill="#ECB22E"/><path d="M15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52z" fill="#36C5F0"/><path d="M15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z" fill="#36C5F0"/></svg></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/zoom/2D8CFF" width="28" height="28" alt="Zoom" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/spotify/1DB954" width="28" height="28" alt="Spotify" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/firefoxbrowser/FF7139" width="28" height="28" alt="Firefox" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/linear/5B5BD6" width="28" height="28" alt="Linear" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/raycast/FF6363" width="28" height="28" alt="Raycast" draggable="false"></div>
+      <!-- duplicate row 1 -->
+      <div class="mq-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="#007ACC"><path d="M23.15 2.587L18.21.21a1.494 1.494 0 0 0-1.705.29l-9.46 8.63-4.12-3.128a.999.999 0 0 0-1.276.057L.327 7.261A1 1 0 0 0 .326 8.74L3.899 12 .326 15.26a1 1 0 0 0 .001 1.479L1.65 17.94a.999.999 0 0 0 1.276.057l4.12-3.128 9.46 8.63a1.492 1.492 0 0 0 1.704.29l4.942-2.377A1.5 1.5 0 0 0 24 20.06V3.939a1.5 1.5 0 0 0-.85-1.352zm-5.146 14.861L10.826 12l7.178-5.448v10.896z"/></svg></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/googlechrome/4285F4" width="28" height="28" alt="Chrome" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/figma/F24E1E" width="28" height="28" alt="Figma" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/notion/000000" width="28" height="28" alt="Notion" draggable="false"></div>
+      <div class="mq-icon"><svg width="28" height="28" viewBox="0 0 24 24"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52z" fill="#E01E5A"/><path d="M6.313 15.165a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313z" fill="#E01E5A"/><path d="M8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834z" fill="#2EB67D"/><path d="M8.834 6.313a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312z" fill="#2EB67D"/><path d="M18.956 8.834a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834z" fill="#ECB22E"/><path d="M17.688 8.834a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312z" fill="#ECB22E"/><path d="M15.165 18.956a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52z" fill="#36C5F0"/><path d="M15.165 17.688a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z" fill="#36C5F0"/></svg></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/zoom/2D8CFF" width="28" height="28" alt="Zoom" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/spotify/1DB954" width="28" height="28" alt="Spotify" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/firefoxbrowser/FF7139" width="28" height="28" alt="Firefox" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/linear/5B5BD6" width="28" height="28" alt="Linear" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/raycast/FF6363" width="28" height="28" alt="Raycast" draggable="false"></div>
+    </div>
+  </div>
+  <div class="mq-wrap">
+    <div class="mq-track rev">
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/safari/006CFF" width="28" height="28" alt="Safari" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/github/181717" width="28" height="28" alt="GitHub" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/gitlab/FC6D26" width="28" height="28" alt="GitLab" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/jira/0052CC" width="28" height="28" alt="Jira" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/discord/5865F2" width="28" height="28" alt="Discord" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/microsoftteams/6264A7" width="28" height="28" alt="Teams" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/dribbble/EA4C89" width="28" height="28" alt="Dribbble" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/trello/0052CC" width="28" height="28" alt="Trello" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/telegram/26A5E4" width="28" height="28" alt="Telegram" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/whatsapp/25D366" width="28" height="28" alt="WhatsApp" draggable="false"></div>
+      <!-- duplicate row 2 -->
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/safari/006CFF" width="28" height="28" alt="Safari" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/github/181717" width="28" height="28" alt="GitHub" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/gitlab/FC6D26" width="28" height="28" alt="GitLab" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/jira/0052CC" width="28" height="28" alt="Jira" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/discord/5865F2" width="28" height="28" alt="Discord" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/microsoftteams/6264A7" width="28" height="28" alt="Teams" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/dribbble/EA4C89" width="28" height="28" alt="Dribbble" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/trello/0052CC" width="28" height="28" alt="Trello" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/telegram/26A5E4" width="28" height="28" alt="Telegram" draggable="false"></div>
+      <div class="mq-icon"><img src="https://cdn.simpleicons.org/whatsapp/25D366" width="28" height="28" alt="WhatsApp" draggable="false"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA FINAL -->
+<section class="cta-final">
+  <div class="cta-inner reveal">
+    <h2 class="cta-title">Finis de jongler.<br>Commence à focus.</h2>
+    <p class="cta-sub">Inscris-toi sur la liste d'attente. Tu seras le premier notifié au lancement.</p>
+    <form class="wl-form" onsubmit="handleWaitlist(event)">
+      <div class="wl-row">
+        <input class="wl-input wl-input-dark" type="email" placeholder="ton@email.com" required autocomplete="email">
+        <button type="submit" class="wl-btn wl-btn-cta">Rejoindre la liste →</button>
+      </div>
+      <p class="wl-hint" style="color:rgba(255,255,255,.3)">Pas de spam. Un seul email au lancement.</p>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-inner">
+    <div class="foot-brand">
+      <img src="assets/Grand logo.png" alt="Staged">
+      <p class="foot-tagline">Ton bureau, mémorisé. Ton focus, préservé.</p>
+    </div>
+    <div class="foot-col">
+      <h4>Produit</h4>
+      <a href="#features">Features</a>
+      <a href="#waitlist">Liste d'attente</a>
+      <a href="#">Changelog</a>
+      <a href="#">Roadmap</a>
+    </div>
+    <div class="foot-col">
+      <h4>Ressources</h4>
+      <a href="#">Documentation</a>
+      <a href="#faq">FAQ</a>
+      <a href="#">Blog</a>
+      <a href="#">Twitter / X</a>
+    </div>
+    <div class="foot-col">
+      <h4>Légal</h4>
+      <a href="confidentialite.html">Confidentialité</a>
+      <a href="cgu.html">CGU</a>
+      <a href="#contact">Contact</a>
+      <a href="#">GitHub</a>
+    </div>
+  </div>
+  <div class="foot-bot">
+    <span class="foot-copy">© 2026 Staged · Tous droits réservés</span>
+  </div>
+</footer>
+
+<script>
+// Parallax hero
+const _hs=document.querySelector('.hero-shot');
+if(_hs){window.addEventListener('scroll',()=>{_hs.style.transform=`translateY(${window.scrollY*.18}px)`},{passive:true})}
+
+// Reorder sections
+const _mq=document.querySelector('.mq-section');
+const _how=document.getElementById('how');
+const _compare=document.querySelector('.compare');
+const _stats=document.querySelector('.stats');
+const _features=document.getElementById('features');
+if(_compare&&_stats)_stats.before(_compare);
+if(_mq&&_how)_how.after(_mq);
+if(_features&&_how)_how.after(_features);
+
+// Scroll to top
+const sttBtn=document.getElementById('stt');
+window.addEventListener('scroll',()=>{sttBtn.classList.toggle('visible',window.scrollY>400)},{passive:true});
+sttBtn.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+
+// Hamburger
+const hbg = document.getElementById('hbg');
+const mmenu = document.getElementById('mmenu');
+const mmx = document.getElementById('mm-x');
+const mmbd = document.getElementById('mm-bd');
+function openM(){mmenu.classList.add('open');hbg.classList.add('open');document.body.style.overflow='hidden'}
+function closeM(){mmenu.classList.remove('open');hbg.classList.remove('open');document.body.style.overflow=''}
+hbg.addEventListener('click',()=>mmenu.classList.contains('open')?closeM():openM());
+mmx.addEventListener('click',closeM);
+mmbd.addEventListener('click',closeM);
+document.querySelectorAll('[data-close]').forEach(el=>el.addEventListener('click',closeM));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
+
+// Feature tabs
+document.querySelectorAll('.ftab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('on'));
+    document.querySelectorAll('.fpanel').forEach(p=>p.classList.remove('on'));
+    tab.classList.add('on');
+    const panel=document.getElementById('panel-'+tab.dataset.tab);
+    if(panel)panel.classList.add('on');
+  });
+});
+
+// Waitlist
+function handleWaitlist(e){
+  e.preventDefault();
+  const btn=e.target.querySelector('[type="submit"]');
+  const orig=btn.textContent;
+  btn.textContent='Inscription en cours…';
+  btn.style.opacity='.6';
+  btn.disabled=true;
+  setTimeout(()=>{
+    btn.textContent='Tu es inscrit ✓';
+    btn.style.background='#10b981';
+    btn.style.opacity='1';
+    e.target.reset();
+    setTimeout(()=>{
+      btn.textContent=orig;
+      btn.style.background='';
+      btn.style.opacity='';
+      btn.disabled=false;
+    },5000);
+  },900);
+}
+
+// Contact form
+function handleContact(e){
+  e.preventDefault();
+  const btn=document.getElementById('cf-submit');
+  btn.textContent='Envoi en cours…';
+  btn.style.opacity='.6';
+  btn.disabled=true;
+  setTimeout(()=>{
+    btn.textContent='Message envoyé ✓';
+    btn.style.background='#10b981';
+    btn.style.opacity='1';
+    e.target.reset();
+    setTimeout(()=>{
+      btn.textContent='Envoyer le message';
+      btn.style.background='';
+      btn.style.opacity='';
+      btn.disabled=false;
+    },4000);
+  },1200);
+}
+
+// FAQ accordion
+document.querySelectorAll('.fq-q').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const fq=btn.closest('.fq');
+    const isOpen=fq.classList.contains('open');
+    document.querySelectorAll('.fq').forEach(f=>f.classList.remove('open'));
+    if(!isOpen)fq.classList.add('open');
+  });
+});
+
+// Marquee fill — clone items until track covers 3× viewport
+(function(){
+  document.querySelectorAll('.mq-track').forEach(function(track){
+    var seed=Array.from(track.children).slice(0,10).map(function(el){return el.cloneNode(true)});
+    var limit=window.innerWidth*3;
+    while(track.scrollWidth<limit){
+      seed.forEach(function(el){track.appendChild(el.cloneNode(true))});
+    }
+  });
+})();
+
+// Reveal on scroll
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('up');obs.unobserve(e.target)}});
+},{threshold:0.08,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// Floating icons — entrance + parallax
+(function(){
+  const statsEl=document.querySelector('.stats');
+  const fiEls=[...document.querySelectorAll('.fi')];
+  if(!statsEl||!fiEls.length)return;
+  const speeds=[0.12,0.18,0.10,0.15,0.14,0.09,0.16,0.11];
+  const dirs  =[   1,  -1,   1,  -1,   1,  -1,   1,  -1];
+  const rm=window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  function getPY(i){
+    const r=statsEl.getBoundingClientRect();
+    return((r.top+r.height/2)-window.innerHeight/2)*speeds[i]*dirs[i]*0.25;
+  }
+
+  // entrance
+  const ioFi=new IntersectionObserver(entries=>{
+    if(!entries[0].isIntersecting)return;
+    fiEls.forEach((el,i)=>{
+      const delay=rm?0:i*70;
+      const dur=rm?0:650;
+      el.style.transition=`opacity ${dur}ms ${delay}ms cubic-bezier(.22,1,.36,1),transform ${dur}ms ${delay}ms cubic-bezier(.22,1,.36,1)`;
+      el.style.opacity='1';
+      el.style.transform=`translateY(${rm?0:getPY(i)}px)`;
+      setTimeout(()=>{el.style.transition='none';},dur+delay+50);
+    });
+    ioFi.disconnect();
+  },{threshold:0.12});
+  ioFi.observe(statsEl);
+
+  // parallax
+  if(!rm){
+    function onScroll(){
+      fiEls.forEach((el,i)=>{
+        if(el.style.opacity!=='1')return;
+        el.style.transform=`translateY(${getPY(i)}px)`;
+      });
+    }
+    window.addEventListener('scroll',onScroll,{passive:true});
+  }
+})();
+</script>
+</body>
+</html>
